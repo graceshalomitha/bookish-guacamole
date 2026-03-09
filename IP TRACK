@@ -1,0 +1,98 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+# Grace Design - Animated Edition
+
+from rich.console import Console
+from rich.live import Live
+from rich.text import Text
+from rich.panel import Panel
+import time
+import os
+
+console = Console()
+
+def clear_screen():
+    os.system('clear' if os.name != 'nt' else 'cls')
+
+def animate_loading():
+    """Animasi loading Grace"""
+    frames = ["🔴", "🟢", "🟡", "🔵", "🟣", "🟠"]
+    
+    with Live(console=console) as live:
+        for i in range(15):
+            text = Text()
+            text.append(f"Grace Loading ", style="bold red")
+            text.append(f"{frames[i % len(frames)]} ", style="bold green")
+            text.append(f"[{i+1}/15]", style="yellow")
+            live.update(text)
+            time.sleep(0.1)
+
+def print_header():
+    console.print(Panel.fit(
+        "[bold red]🔐 GRACE SECURITY TOOL 🔐[/bold red]\n"
+        "[bold green]Termux Edition - Red & Green Design[/bold green]",
+        title="[bold red]Welcome[/bold red]",
+        border_style="red"
+    ))
+
+def check_ip(ip_address=None):
+    """Cek IP dengan animasi"""
+    animate_loading()
+    
+    try:
+        import requests
+        
+        if ip_address is None:
+            url = "http://ip-api.com/json/"
+        else:
+            url = f"http://ip-api.com/json/{ip_address}"
+        
+        response = requests.get(url, timeout=10)
+        data = response.json()
+        
+        if data.get('status') == 'success':
+            console.print(Panel.fit(
+                f"[green]✓ IP: {data['query']}[/green]\n"
+                f"[green]✓ Country: {data['country']}[/green]\n"
+                f"[green]✓ City: {data['city']}[/green]",
+                title="Success",
+                border_style="green"
+            ))
+        else:
+            console.print(f"[red]✗ Error: {data.get('message')}[/red]")
+            
+    except Exception as e:
+        console.print(f"[red]✗ Error: {e}[/red]")
+
+def main():
+    while True:
+        clear_screen()
+        print_header()
+        
+        console.print("\n[bold green]1. Cek IP Publik Sendiri[/bold green]")
+        console.print("[bold green]2. Cek IP Target[/bold green]")
+        console.print("[bold red]3. Exit[/bold red]")
+        
+        choice = console.input("\n[green]Select Option: [/green]")
+        
+        if choice == '1':
+            check_ip()
+        elif choice == '2':
+            ip = console.input("[green]Enter IP Address: [/green]")
+            check_ip(ip)
+        elif choice == '3':
+            console.print("[red][!] Exiting Grace Security Tool...[/red]")
+            break
+        else:
+            console.print("[red][!] Invalid Option![/red]")
+        
+        console.input("\n[green]Press Enter to continue...[/green]")
+
+if __name__ == "__main__":
+    main()
+
+
+
+
+
+              
